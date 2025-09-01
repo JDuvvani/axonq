@@ -1,0 +1,9 @@
+{
+  "extends": "@axon/typescript-config/base.json",
+  "compilerOptions": {
+    "lib": ["ES2024"],
+    "outDir": "dist"
+  },
+  "include": ["."],
+  "exclude": ["node_modules", "dist"]
+}
