@@ -1,14 +1,18 @@
 import { logger } from "@axon/logger";
 import { createApp } from "./app.js";
 import { Server } from "http";
+import { connectDB, disconnectDB } from "./config/db.js";
+import env from "./config/env.js";
 
 const app = createApp();
 let server: Server;
 
 const startServer = async () => {
   try {
-    server = app.listen(5001, () => {
-      logger.info(`API running on ${5001}`);
+    await connectDB();
+
+    server = app.listen(env.PORT, () => {
+      logger.info(`API running on ${env.PORT}`);
     });
   } catch (err) {
     logger.error(err, "Startup error:");
@@ -24,6 +28,7 @@ const shutdown = async (exitCode: number) => {
       logger.info("Server closed");
     }
 
+    await disconnectDB();
     process.exit(exitCode);
   } catch (err) {
     logger.error(err, "Error during shutdown:");
