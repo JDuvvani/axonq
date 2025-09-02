@@ -2,7 +2,11 @@
   "extends": "@axon/typescript-config/base.json",
   "compilerOptions": {
     "lib": ["ES2024"],
-    "outDir": "dist"
+    "outDir": "dist",
+    "baseUrl": "./",
+    "paths": {
+      "@middleware/*": ["src/middleware/*"]
+    }
   },
   "include": ["."],
   "exclude": ["node_modules", "dist"]
