@@ -20,4 +20,10 @@ router.put("/:id", validate(updateClassSchema), classController.updateClass);
 
 router.delete("/:id", validate(deleteClassSchema), classController.deleteClass);
 
+router.get(
+  "/:id/students",
+  validate(getClassByIdSchema),
+  classController.listStudents
+);
+
 export const classRoutes = router;

@@ -4,6 +4,7 @@ import { userService } from "../user/user.service.js";
 import { classRepo } from "./class.repo.js";
 import { userRepo } from "../user/user.repo.js";
 import { ClassSample } from "@v1/user/user.model.js";
+import { studentRepo } from "@v1/student/student.repo.js";
 
 class ClassService {
   createClass = async (data: CreateClassDTO): Promise<IClassDoc> => {
@@ -62,7 +63,12 @@ class ClassService {
 
   deleteClass = async (id: string): Promise<IClassDoc | null> => {
     const deleted = await classRepo.delete(id);
-    if (deleted) await userRepo.removeClass(deleted.teacher, deleted.id);
+    if (deleted) {
+      Promise.all([
+        userRepo.removeClass(deleted.teacher, deleted.id),
+        studentRepo.deleteByClass(id),
+      ]);
+    }
 
     return deleted;
   };

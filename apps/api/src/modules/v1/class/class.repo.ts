@@ -26,6 +26,14 @@ class ClassRepo {
     return (await Class.findByIdAndDelete(id).exec())?.toJSON() ?? null;
   };
 
+  addStudent = async (id: string): Promise<IClassDoc | null> => {
+    return Class.findByIdAndUpdate(id, { $inc: { studentCount: 1 } }).exec();
+  };
+
+  removeStudent = async (id: string): Promise<IClassDoc | null> => {
+    return Class.findByIdAndUpdate(id, { $inc: { studentCount: -1 } }).exec();
+  };
+
   list = async (): Promise<IClassDoc[]> => {
     return Class.find().exec();
   };

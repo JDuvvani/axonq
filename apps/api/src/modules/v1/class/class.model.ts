@@ -15,6 +15,7 @@ const classSchema = new Schema<IClassDoc>(
   {
     name: { type: String, required: true, trim: true },
     teacher: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    studentCount: { type: Number, default: 0 },
   },
   { timestamps: true }
 );
