@@ -1,7 +1,8 @@
 import express, { json, urlencoded, type Express } from "express";
 import cors from "cors";
 import helmet from "helmet";
-import { userRouter } from "./modules/v1/user/user.routes.js";
+import { userRoutes } from "@v1/user/user.routes.js";
+import { classRoutes } from "@v1/class/class.routes.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 
 export const createApp = (): Express => {
@@ -12,7 +13,8 @@ export const createApp = (): Express => {
   app.use(cors());
   app.use(helmet());
 
-  app.use("/api/v1/users", userRouter);
+  app.use("/api/v1/users", userRoutes);
+  app.use("/api/v1/classes", classRoutes);
 
   app.get("/health", (_req, res) => {
     res.json({ status: "ok", uptime: process.uptime() });

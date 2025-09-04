@@ -8,4 +8,4 @@ export const objectIdString = string().regex(
 export const idParamsSchema = object({
   id: objectIdString,
 });
-export type IdParams = output<typeof idParamsSchema>;
+export type ByIdDTO = output<typeof idParamsSchema>;

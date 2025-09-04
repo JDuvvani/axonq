@@ -19,4 +19,4 @@ router.put("/:id", validate(updateUserSchema), userController.updateUser);
 
 router.delete("/:id", validate(getUserByIdSchema), userController.deleteUser);
 
-export const userRouter = router;
+export const userRoutes = router;

@@ -5,7 +5,8 @@
     "outDir": "dist",
     "baseUrl": "./",
     "paths": {
-      "@middleware/*": ["src/middleware/*"]
+      "@middleware/*": ["src/middleware/*"],
+      "@v1/*": ["src/modules/v1/*"]
     }
   },
   "include": ["."],

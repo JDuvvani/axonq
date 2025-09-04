@@ -7,4 +7,9 @@ export interface IUser extends WithTimestamps {
   email: string;
   role: UserRole;
   phone?: string;
+  classes: {
+    id: string;
+    name: string;
+  }[];
+  classCount: number;
 }
