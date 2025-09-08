@@ -3,6 +3,8 @@ import { Response } from "express";
 import { userService } from "./user.service.js";
 import { ValidatedRequest } from "@middleware/validate.js";
 import {
+  addChildSchema,
+  createParentSchema,
   createUserSchema,
   getUserByIdSchema,
   updateUserSchema,
@@ -16,6 +18,19 @@ class UserController {
   ) => {
     try {
       const user = await userService.createUser(req.body);
+
+      return res.status(201).json(Success("User created", user));
+    } catch (err: any) {
+      return res.status(400).json(Fail(err.message || "Failed to create user"));
+    }
+  };
+
+  createParent = async (
+    req: ValidatedRequest<typeof createParentSchema>,
+    res: Response
+  ) => {
+    try {
+      const user = await userService.createParent(req.body);
 
       return res.status(201).json(Success("User created", user));
     } catch (err: any) {
@@ -79,6 +94,19 @@ class UserController {
       return res.json(Success("Users list retrieved", users));
     } catch (err: any) {
       return res.status(500).json(Fail(err.message || "Failed to fetch users"));
+    }
+  };
+
+  addChild = async (
+    req: ValidatedRequest<typeof addChildSchema>,
+    res: Response
+  ) => {
+    try {
+      const updated = await userService.addChild(req.params.id, req.body);
+
+      return res.json(Success("Child added", updated));
+    } catch (err: any) {
+      return res.status(400).json(Fail(err.message));
     }
   };
 }

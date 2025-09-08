@@ -1,5 +1,6 @@
 import { CreateClassDTO, UpdateClassDTO } from "@axon/types";
 import { Class, IClassDoc } from "./class.model.js";
+import { DeleteResult } from "mongoose";
 
 class ClassRepo {
   create = async (data: CreateClassDTO): Promise<IClassDoc> => {
@@ -9,6 +10,10 @@ class ClassRepo {
 
   findById = async (id: string): Promise<IClassDoc | null> => {
     return (await Class.findById(id).exec())?.toJSON() ?? null;
+  };
+
+  findByTeacher = async (teacherId: string): Promise<IClassDoc[]> => {
+    return await Class.find({ teacher: teacherId }).select("id");
   };
 
   update = async (
@@ -24,6 +29,10 @@ class ClassRepo {
 
   delete = async (id: string): Promise<IClassDoc | null> => {
     return (await Class.findByIdAndDelete(id).exec())?.toJSON() ?? null;
+  };
+
+  deleteByTeacher = async (teacherId: string): Promise<DeleteResult> => {
+    return Class.deleteMany({ teacher: teacherId });
   };
 
   addStudent = async (id: string): Promise<IClassDoc | null> => {

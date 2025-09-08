@@ -1,15 +1,10 @@
 import { IStudent } from "@axon/types";
 import { Document, model, Schema, Types } from "mongoose";
+import { ParentSample } from "@types";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const omitList = ["id", "class", "parents", "createdAt", "updatedAt"] as const;
 type omits = (typeof omitList)[number];
-
-export type ParentSample = {
-  parentId: Types.ObjectId;
-  name: string;
-  imageUrl: string;
-};
 
 export interface IStudentDoc extends Omit<IStudent, omits>, Document {
   id: Types.ObjectId;

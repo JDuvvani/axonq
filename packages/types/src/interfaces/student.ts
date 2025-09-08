@@ -12,3 +12,12 @@ export interface IStudent extends WithTimestamps {
     imageUrl: string;
   }[];
 }
+
+export interface IParentToken {
+  id: string;
+  token: string;
+  student: { studentId: string; name: string };
+  expiresAt: string;
+  used: boolean;
+  createdAt: string;
+}

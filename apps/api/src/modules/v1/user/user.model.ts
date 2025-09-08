@@ -1,17 +1,14 @@
-import { Document, model, Schema, Types } from "mongoose";
+import { Document, model, Schema } from "mongoose";
 import { IUser } from "@axon/types";
+import { ClassSample, StudentSample } from "@types";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const omitList = ["id", "classes", "createdAt", "updatedAt"] as const;
 type omits = (typeof omitList)[number];
 
-export type ClassSample = {
-  classId: Types.ObjectId;
-  name: string;
-};
-
 export interface IUserDoc extends Omit<IUser, omits>, Document {
   classes: ClassSample[];
+  children: StudentSample[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -31,10 +28,21 @@ const userSchema = new Schema<IUserDoc>(
       enum: ["TEACHER", "PARENT", "ADMIN"],
       required: true,
     },
+    imageUrl: { type: String },
     phone: { type: String },
     classes: [
       {
         classId: { type: Schema.Types.ObjectId, ref: "Class", require: true },
+        name: { type: String, required: true, trim: true },
+      },
+    ],
+    children: [
+      {
+        studentId: {
+          type: Schema.Types.ObjectId,
+          ref: "Student",
+          require: true,
+        },
         name: { type: String, required: true, trim: true },
       },
     ],

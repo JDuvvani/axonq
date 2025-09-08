@@ -1,7 +1,10 @@
 import { Router } from "express";
 import {
   createStudentSchema,
+  deleteParentTokenSchema,
   deleteStudentSchema,
+  generateParentTokenSchema,
+  getParentTokensSchema,
   getStudentByIdSchema,
   updateStudentSchema,
 } from "@axon/types";
@@ -34,6 +37,24 @@ router.delete(
   "/:id",
   validate(deleteStudentSchema),
   studentController.deleteStudent
+);
+
+router.post(
+  "/:id/token",
+  validate(generateParentTokenSchema),
+  studentController.generateParentToken
+);
+
+router.get(
+  "/:id/token",
+  validate(getParentTokensSchema),
+  studentController.getParentTokens
+);
+
+router.delete(
+  "/:id/token/:tokenId",
+  validate(deleteParentTokenSchema),
+  studentController.deleteParentToken
 );
 
 export const studentRoutes = router;

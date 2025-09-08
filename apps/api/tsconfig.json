@@ -6,7 +6,8 @@
     "baseUrl": "./",
     "paths": {
       "@middleware/*": ["src/middleware/*"],
-      "@v1/*": ["src/modules/v1/*"]
+      "@v1/*": ["src/modules/v1/*"],
+      "@types": ["src/types/index.js"]
     }
   },
   "include": ["."],

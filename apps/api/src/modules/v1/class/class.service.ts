@@ -3,8 +3,9 @@ import { IClassDoc } from "./class.model.js";
 import { userService } from "../user/user.service.js";
 import { classRepo } from "./class.repo.js";
 import { userRepo } from "../user/user.repo.js";
-import { ClassSample } from "@v1/user/user.model.js";
-import { studentRepo } from "@v1/student/student.repo.js";
+import { ClassSample } from "@types";
+import { DeleteResult } from "mongoose";
+import { studentService } from "@v1/student/student.service.js";
 
 class ClassService {
   createClass = async (data: CreateClassDTO): Promise<IClassDoc> => {
@@ -66,11 +67,20 @@ class ClassService {
     if (deleted) {
       Promise.all([
         userRepo.removeClass(deleted.teacher, deleted.id),
-        studentRepo.deleteByClass(id),
+        studentService.deleteByClass(id),
       ]);
     }
 
     return deleted;
+  };
+
+  deleteByTeacher = async (teacherId: string): Promise<DeleteResult> => {
+    const classes = await classRepo.findByTeacher(teacherId);
+    const classIds = classes.map((c) => c.id);
+
+    await studentService.deleteByClasses(classIds);
+
+    return classRepo.deleteByTeacher(teacherId);
   };
 
   listClasses = async (): Promise<IClassDoc[]> => {

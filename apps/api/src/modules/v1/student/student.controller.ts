@@ -3,7 +3,9 @@ import { Request, Response } from "express";
 import { ValidatedRequest } from "@middleware/validate.js";
 import {
   createStudentSchema,
+  deleteParentTokenSchema,
   deleteStudentSchema,
+  generateParentTokenSchema,
   getStudentByIdSchema,
   updateStudentSchema,
 } from "@axon/types";
@@ -72,6 +74,50 @@ class StudentController {
     try {
       const students = await studentService.listStudents();
       return res.json(Success("Student list retrieved", students));
+    } catch (err: any) {
+      return res.status(500).json(Fail(err.message));
+    }
+  };
+
+  generateParentToken = async (
+    req: ValidatedRequest<typeof generateParentTokenSchema>,
+    res: Response
+  ) => {
+    try {
+      const token = await studentService.generateParentToken(
+        req.params.id,
+        req.body?.ttlHours
+      );
+      return res.json(
+        Success("Parent token generated", {
+          token: token.token,
+          expiresAt: token.expiresAt,
+        })
+      );
+    } catch (err: any) {
+      return res.status(400).json(Fail(err.message));
+    }
+  };
+
+  getParentTokens = async (
+    req: ValidatedRequest<typeof generateParentTokenSchema>,
+    res: Response
+  ) => {
+    try {
+      const tokens = await studentService.getActiveParentTokens(req.params.id);
+      return res.json(Success("Parent tokens retrieved", tokens));
+    } catch (err: any) {
+      return res.status(500).json(Fail(err.message));
+    }
+  };
+
+  deleteParentToken = async (
+    req: ValidatedRequest<typeof deleteParentTokenSchema>,
+    res: Response
+  ) => {
+    try {
+      const token = await studentService.deleteParentToken(req.params.tokenId);
+      return res.json(Success("Parent token deleted", token));
     } catch (err: any) {
       return res.status(500).json(Fail(err.message));
     }

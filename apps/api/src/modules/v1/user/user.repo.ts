@@ -1,11 +1,19 @@
 import { CreateUserDTO } from "@axon/types";
-import { ClassSample, IUserDoc, User } from "./user.model.js";
+import { IUserDoc, User } from "./user.model.js";
 import { Types } from "mongoose";
-import { Class } from "@v1/class/class.model.js";
+import { ClassSample, StudentSample } from "@types";
 
 class UserRepo {
   create = async (data: CreateUserDTO): Promise<IUserDoc> => {
     const user = await User.create(data);
+    return user;
+  };
+
+  createParent = async (
+    data: CreateUserDTO,
+    student: StudentSample
+  ): Promise<IUserDoc> => {
+    const user = await User.create({ ...data, children: [student] });
     return user;
   };
 
@@ -29,7 +37,6 @@ class UserRepo {
   };
 
   delete = async (id: string): Promise<IUserDoc | null> => {
-    await Class.deleteMany({ teacher: id });
     return User.findByIdAndDelete(id).exec();
   };
 
@@ -52,6 +59,17 @@ class UserRepo {
       $pull: { classes: { classId } },
       $inc: { classCount: -1 },
     }).exec();
+  };
+
+  addChild = async (
+    id: string,
+    sample: StudentSample
+  ): Promise<IUserDoc | null> => {
+    return User.findByIdAndUpdate(
+      id,
+      { $addToSet: { children: sample } },
+      { new: true }
+    ).exec();
   };
 }
 
