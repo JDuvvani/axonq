@@ -5,6 +5,7 @@ export interface IUser extends WithTimestamps {
   id: string;
   name: string;
   email: string;
+  clerkId: string;
   role: UserRole;
   imageUrl: string;
   phone?: string;
@@ -13,4 +14,8 @@ export interface IUser extends WithTimestamps {
     name: string;
   }[];
   classCount: number;
+  children: {
+    studentId: string;
+    name: string;
+  }[];
 }

@@ -5,6 +5,7 @@ import { userRoutes } from "@v1/user/user.routes.js";
 import { classRoutes } from "@v1/class/class.routes.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 import { studentRoutes } from "@v1/student/student.routes.js";
+import { clerkMiddleware } from "@clerk/express";
 
 export const createApp = (): Express => {
   const app = express();
@@ -13,6 +14,7 @@ export const createApp = (): Express => {
   app.use(json());
   app.use(cors());
   app.use(helmet());
+  app.use(clerkMiddleware());
 
   app.use("/api/v1/users", userRoutes);
   app.use("/api/v1/classes", classRoutes);

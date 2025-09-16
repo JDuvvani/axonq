@@ -1,29 +1,25 @@
-import { z, email, object, string, url, uuid } from "zod";
-import { UserRoles } from "../../enums.js";
+import { email, object, string, url, uuid } from "zod";
 import { idParamsSchema } from "../common.js";
 
 export const createUserSchema = object({
   body: object({
     name: string().min(2),
     email: email(),
-    imageUrl: url().optional(),
-    role: z.enum(UserRoles),
-    phone: string().optional(),
-  }),
-});
-
-export const createParentSchema = object({
-  body: object({
-    name: string().min(2),
-    email: email(),
-    token: uuid(),
+    clerkId: string(),
     imageUrl: url().optional(),
     phone: string().optional(),
+    token: uuid().optional(),
   }),
 });
 
 export const getUserByIdSchema = object({
   params: idParamsSchema,
+});
+
+export const getUserByClerkIdSchema = object({
+  body: object({
+    clerkId: string(),
+  }),
 });
 
 export const updateUserSchema = object({

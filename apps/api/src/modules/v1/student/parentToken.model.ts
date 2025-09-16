@@ -28,7 +28,6 @@ const parentTokenSchema = new Schema<IParentTokenDoc>(
   { timestamps: true }
 );
 
-parentTokenSchema.index({ token: 1 });
 parentTokenSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 
 export const ParentToken = model<IParentTokenDoc>(

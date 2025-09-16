@@ -21,8 +21,8 @@ const userSchema = new Schema<IUserDoc>(
       required: true,
       unique: true,
       lowercase: true,
-      index: true,
     },
+    clerkId: { type: String, required: true, unique: true, index: true },
     role: {
       type: String,
       enum: ["TEACHER", "PARENT", "ADMIN"],

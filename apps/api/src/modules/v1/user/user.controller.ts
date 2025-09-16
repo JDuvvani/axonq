@@ -1,15 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Response } from "express";
+import { Request, Response } from "express";
 import { userService } from "./user.service.js";
 import { ValidatedRequest } from "@middleware/validate.js";
 import {
   addChildSchema,
-  createParentSchema,
   createUserSchema,
   getUserByIdSchema,
   updateUserSchema,
 } from "@axon/types";
 import { Fail, Success } from "@axon/utils";
+import { getAuth } from "@clerk/express";
 
 class UserController {
   createUser = async (
@@ -18,19 +18,6 @@ class UserController {
   ) => {
     try {
       const user = await userService.createUser(req.body);
-
-      return res.status(201).json(Success("User created", user));
-    } catch (err: any) {
-      return res.status(400).json(Fail(err.message || "Failed to create user"));
-    }
-  };
-
-  createParent = async (
-    req: ValidatedRequest<typeof createParentSchema>,
-    res: Response
-  ) => {
-    try {
-      const user = await userService.createParent(req.body);
 
       return res.status(201).json(Success("User created", user));
     } catch (err: any) {
@@ -53,6 +40,23 @@ class UserController {
       return res
         .status(500)
         .json(Fail(err.message || "Failed to get user by Id"));
+    }
+  };
+
+  getMeByClerkId = async (req: Request, res: Response) => {
+    try {
+      const { userId } = getAuth(req);
+      if (!userId) return res.status(401).json(Fail("Not authenticated"));
+      const user = await userService.getUserByClerkId(userId);
+      if (!user) {
+        return res.status(404).json(Fail("User not found"));
+      }
+
+      return res.json(Success("User retrieved", user));
+    } catch (err: any) {
+      return res
+        .status(500)
+        .json(Fail(err.message || "Failed to get user by clerkId"));
     }
   };
 

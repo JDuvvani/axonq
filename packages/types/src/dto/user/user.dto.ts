@@ -1,14 +1,14 @@
 import { output } from "zod";
 import {
   addChildSchema,
-  createParentSchema,
   createUserSchema,
+  getUserByClerkIdSchema,
   updateUserSchema,
 } from "./user.schema.js";
 
 export type CreateUserDTO = output<typeof createUserSchema>["body"];
 
-export type CreateParentDTO = output<typeof createParentSchema>["body"];
+export type GetUserByClerkIdDTO = output<typeof getUserByClerkIdSchema>["body"];
 
 export type UpdateUserDTO = output<typeof updateUserSchema>["body"];
 

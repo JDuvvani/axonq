@@ -1,45 +1,44 @@
-import {
-  AddChildDTO,
-  CreateParentDTO,
-  CreateUserDTO,
-  UpdateUserDTO,
-} from "@axon/types";
+import { AddChildDTO, CreateUserDTO, UpdateUserDTO } from "@axon/types";
 import { userRepo } from "./user.repo.js";
 import { IUserDoc } from "./user.model.js";
 import { studentRepo } from "@v1/student/student.repo.js";
 import { omit } from "lodash";
 import { classService } from "@v1/class/class.service.js";
 import { studentService } from "@v1/student/student.service.js";
-import { ParentSample } from "@types";
+import { CreateUser, ParentSample } from "@types";
 
 class UserService {
   createUser = async (data: CreateUserDTO): Promise<IUserDoc> => {
+    let token;
+
+    if (data.token) {
+      token = await studentRepo.findParentToken(data.token);
+      if (!token || token.used) throw new Error("Invalid token");
+      if (token.expiresAt < new Date()) throw new Error("Token expired");
+    }
+
     const existing = await userRepo.findByEmail(data.email);
     if (existing) throw new Error("Email already in use");
 
-    return userRepo.create(data);
-  };
+    const input: CreateUser = { ...omit(data, ["token"]), role: "TEACHER" };
 
-  createParent = async (input: CreateParentDTO): Promise<IUserDoc> => {
-    const token = await studentRepo.findParentToken(input.token);
-    if (!token || token.used) throw new Error("Invalid token");
-    if (token.expiresAt < new Date()) throw new Error("Token expired");
+    if (token) {
+      const data = { ...input, role: "PARENT" };
+      const parent = await userRepo.createParent(data, token.student);
 
-    const existing = await userRepo.findByEmail(input.email);
-    if (existing) throw new Error("Email already in use");
+      const sample: ParentSample = {
+        parentId: parent.id,
+        name: parent.name,
+        imageUrl: parent.imageUrl,
+      };
 
-    const data: CreateUserDTO = { ...omit(input, ["token"]), role: "PARENT" };
+      studentService.addParent(token.student.studentId.toString(), sample);
+      studentRepo.useToken(token.id);
 
-    const parent = await userRepo.createParent(data, token.student);
-    const sample: ParentSample = {
-      parentId: parent.id,
-      name: parent.name,
-      imageUrl: parent.imageUrl,
-    };
-    studentService.addParent(token.student.studentId.toString(), sample);
-    studentRepo.useToken(token.id);
+      return parent;
+    }
 
-    return parent;
+    return userRepo.create(input);
   };
 
   addChild = async (
@@ -73,6 +72,10 @@ class UserService {
 
   getUserByEmail = async (email: string): Promise<IUserDoc | null> => {
     return userRepo.findByEmail(email);
+  };
+
+  getUserByClerkId = async (clerkId: string): Promise<IUserDoc | null> => {
+    return userRepo.findByClerkId(clerkId);
   };
 
   updateUser = async (

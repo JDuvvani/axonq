@@ -1,3 +1,4 @@
+import { UserRole } from "../enums.js";
 import { WithTimestamps } from "../utils.js";
 
 export interface IStudent extends WithTimestamps {
@@ -5,6 +6,7 @@ export interface IStudent extends WithTimestamps {
   firstName: string;
   lastName: string;
   imageUrl?: string;
+  role: UserRole;
   class: string;
   parents: {
     parentId: string;

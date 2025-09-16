@@ -1,10 +1,10 @@
 import { CreateUserDTO } from "@axon/types";
 import { IUserDoc, User } from "./user.model.js";
 import { Types } from "mongoose";
-import { ClassSample, StudentSample } from "@types";
+import { ClassSample, CreateUser, StudentSample } from "@types";
 
 class UserRepo {
-  create = async (data: CreateUserDTO): Promise<IUserDoc> => {
+  create = async (data: CreateUser): Promise<IUserDoc> => {
     const user = await User.create(data);
     return user;
   };
@@ -23,6 +23,10 @@ class UserRepo {
 
   findByEmail = async (email: string): Promise<IUserDoc | null> => {
     return User.findOne({ email }).exec();
+  };
+
+  findByClerkId = async (clerkId: string): Promise<IUserDoc | null> => {
+    return User.findOne({ clerkId }).exec();
   };
 
   findByRole = async (role: IUserDoc["role"]): Promise<IUserDoc[]> => {

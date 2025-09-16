@@ -2,12 +2,12 @@ import { Router } from "express";
 import { validate } from "@middleware/validate.js";
 import {
   addChildSchema,
-  createParentSchema,
   createUserSchema,
   getUserByIdSchema,
   updateUserSchema,
 } from "@axon/types";
 import { userController } from "./user.controller.js";
+import { authenticate } from "@middleware/auth.js";
 
 const router: Router = Router();
 
@@ -15,11 +15,7 @@ router.get("/", userController.listUsers);
 
 router.post("/", validate(createUserSchema), userController.createUser);
 
-router.post(
-  "/parent",
-  validate(createParentSchema),
-  userController.createParent
-);
+router.get("/me", authenticate(), userController.getMeByClerkId);
 
 router.get("/:id", validate(getUserByIdSchema), userController.getUserById);
 
