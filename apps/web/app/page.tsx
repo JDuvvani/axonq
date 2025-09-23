@@ -1,3 +1,7 @@
+import FeaturesSection from "@/components/home/features-section";
+import HeroSection from "@/components/home/hero-section";
+import PricingSection from "@/components/home/pricing-section";
+import CTASection from "@/components/home/cta-section";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
@@ -10,8 +14,11 @@ export default async function Home() {
 
   return (
     <div>
-      <div className="flex justify-center">
-        <h1 className="text-4xl font-bold text-green-600">Landing</h1>
+      <div className="relative w-full">
+        <HeroSection />
+        <FeaturesSection />
+        <PricingSection />
+        <CTASection />
       </div>
     </div>
   );
