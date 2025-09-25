@@ -3,6 +3,7 @@ import { createApp } from "./app.js";
 import { Server } from "http";
 import { connectDB, disconnectDB } from "./config/db.js";
 import env from "./config/env.js";
+import { initServer } from "@sockets";
 
 const app = createApp();
 let server: Server;
@@ -14,6 +15,7 @@ const startServer = async () => {
     server = app.listen(env.PORT, () => {
       logger.info(`API running on ${env.PORT}`);
     });
+    initServer(server);
   } catch (err) {
     logger.error(err, "Startup error:");
     shutdown(1);

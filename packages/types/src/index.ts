@@ -8,6 +8,7 @@ export * from "./utils.js";
 export * from "./interfaces/user.js";
 export * from "./interfaces/class.js";
 export * from "./interfaces/student.js";
+export * from "./interfaces/message.js";
 
 // DTOs + Zod Schemas
 export * from "./dto/user/user.schema.js";

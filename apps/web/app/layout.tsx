@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Source_Sans_3 as FontSans } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/general/header";
-import { ClerkProvider } from "@clerk/nextjs";
+import { ClerkProvider, SignedOut } from "@clerk/nextjs";
 import Footer from "@/components/general/footer";
 
 const fontSans = FontSans({
@@ -28,7 +28,9 @@ export default function RootLayout({
           <div className="flex flex-col min-h-screen relative">
             <Header />
             <main className="flex-1">{children}</main>
-            <Footer />
+            <SignedOut>
+              <Footer />
+            </SignedOut>
           </div>
         </body>
       </html>

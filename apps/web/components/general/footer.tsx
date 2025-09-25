@@ -1,7 +1,7 @@
 "use client";
 
 import NavLink from "@/components/general/nav-link";
-import { ArrowBigUp } from "lucide-react";
+import { ArrowBigUp, Home } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -40,7 +40,10 @@ export default function Footer() {
                       className="text-background group-hover:text-primary"
                     />
                   ) : (
-                    <span>Home</span>
+                    <Home
+                      size={24}
+                      className="text-background group-hover:text-primary"
+                    />
                   )}
                 </NavLink>
               </li>

@@ -9,10 +9,13 @@ import { clerkMiddleware } from "@clerk/express";
 
 export const createApp = (): Express => {
   const app = express();
+  const corsOptions = {
+    origin: "*",
+  };
 
   app.use(urlencoded({ extended: false }));
   app.use(json());
-  app.use(cors());
+  app.use(cors(corsOptions));
   app.use(helmet());
   app.use(clerkMiddleware());
 

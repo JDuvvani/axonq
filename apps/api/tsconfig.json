@@ -7,7 +7,9 @@
     "paths": {
       "@middleware/*": ["src/middleware/*"],
       "@v1/*": ["src/modules/v1/*"],
-      "@types": ["src/types/index.js"]
+      "@types": ["src/types/index.js"],
+      "@sockets": ["src/sockets/index.js"],
+      "@config/*": ["src/config/*"]
     }
   },
   "include": ["."],

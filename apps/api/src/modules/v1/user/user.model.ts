@@ -3,7 +3,13 @@ import { IUser } from "@axon/types";
 import { ClassSample, StudentSample } from "@types";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const omitList = ["id", "classes", "createdAt", "updatedAt"] as const;
+const omitList = [
+  "id",
+  "classes",
+  "children",
+  "createdAt",
+  "updatedAt",
+] as const;
 type omits = (typeof omitList)[number];
 
 export interface IUserDoc extends Omit<IUser, omits>, Document {
