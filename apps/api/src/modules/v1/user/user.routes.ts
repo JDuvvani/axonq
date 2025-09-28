@@ -17,6 +17,8 @@ router.post("/", validate(createUserSchema), userController.createUser);
 
 router.get("/me", authenticate(), userController.getMeByClerkId);
 
+router.get("/clerk/:id", userController.getUserByClerkId);
+
 router.get("/:id", validate(getUserByIdSchema), userController.getUserById);
 
 router.put("/:id", validate(updateUserSchema), userController.updateUser);

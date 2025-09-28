@@ -9,7 +9,8 @@ import {
   updateUserSchema,
 } from "@axon/types";
 import { Fail, Success } from "@axon/utils";
-import { getAuth } from "@clerk/express";
+import { clerkClient, getAuth } from "@clerk/express";
+import { logger } from "@axon/logger";
 
 class UserController {
   createUser = async (
@@ -17,7 +18,12 @@ class UserController {
     res: Response
   ) => {
     try {
+      logger.info("Create User!");
       const user = await userService.createUser(req.body);
+      await clerkClient.users.updateUserMetadata(user.clerkId, {
+        publicMetadata: { role: user.role },
+        unsafeMetadata: { token: null },
+      });
 
       return res.status(201).json(Success("User created", user));
     } catch (err: any) {
@@ -48,6 +54,24 @@ class UserController {
       const { userId } = getAuth(req);
       if (!userId) return res.status(401).json(Fail("Not authenticated"));
       const user = await userService.getUserByClerkId(userId);
+      if (!user) {
+        return res.status(404).json(Fail("User not found"));
+      }
+
+      return res.json(Success("User retrieved", user));
+    } catch (err: any) {
+      return res
+        .status(500)
+        .json(Fail(err.message || "Failed to get user by clerkId"));
+    }
+  };
+
+  getUserByClerkId = async (
+    req: ValidatedRequest<typeof getUserByIdSchema>,
+    res: Response
+  ) => {
+    try {
+      const user = await userService.getUserByClerkId(req.params.id);
       if (!user) {
         return res.status(404).json(Fail("User not found"));
       }

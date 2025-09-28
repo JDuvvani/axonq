@@ -7,6 +7,7 @@ const envSchema = object({
   DB_URI: url(),
   CLERK_PUBLISHABLE_KEY: string(),
   CLERK_SECRET_KEY: string(),
+  CLERK_WEBHOOK_SECRET: string(),
 });
 
 const parsed = envSchema.safeParse(process.env);

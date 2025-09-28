@@ -1,15 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { env as clientEnv } from "@/env/client";
+import { env as clientEnv, env } from "@/env/client";
 import { env as serverEnv } from "@/env/server";
-import { apiFetch } from "@/lib/apiClient";
 import {
   CreateUserDTO,
-  GetUserByClerkIdDTO,
+  IResponseShape,
   IUser,
   UpdateUserDTO,
 } from "@axon/types";
 import { WebhookEvent } from "@clerk/nextjs/server";
-import axios, { AxiosRequestConfig } from "axios";
 import { NextRequest, NextResponse } from "next/server";
 import { Webhook } from "svix";
 
@@ -72,7 +70,13 @@ export async function POST(req: NextRequest) {
         input = { ...input, token: evt.data.unsafe_metadata.token };
       }
 
-      await axios.post(`${clientEnv.NEXT_PUBLIC_API_URL}/api/v1/users`, input);
+      await fetch(`${clientEnv.NEXT_PUBLIC_API_URL}/api/v1/users`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(input),
+      });
     } catch (err: any) {
       console.error("Error creating user in database", err);
       return new NextResponse("Error creating user in database", {
@@ -99,17 +103,14 @@ export async function POST(req: NextRequest) {
       return new NextResponse("No primary email found", { status: 400 });
     }
 
-    const userId: GetUserByClerkIdDTO = { clerkId: id };
-    const options: AxiosRequestConfig = {
-      method: "post",
-      data: userId,
-    };
-
-    const res = await apiFetch(
-      `${clientEnv.NEXT_PUBLIC_API_URL}/api/v1/users/clerk`,
-      options
+    const res = await fetch(
+      `${env.NEXT_PUBLIC_API_URL}/api/v1/users/clerk/${id}`,
+      {
+        method: "GET",
+      }
     );
-    const user: IUser = res.data;
+    const result: IResponseShape<IUser> = await res.json();
+    const user: IUser | undefined = result.data;
 
     if (!user)
       return new NextResponse("User not found in database", { status: 404 });
@@ -140,9 +141,10 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    await apiFetch(`${clientEnv.NEXT_PUBLIC_API_URL}/api/v1/users/${user.id}`, {
-      method: "put",
-      data: input,
+    await fetch(`${env.NEXT_PUBLIC_API_URL}/api/v1/users/${user.id}`, {
+      method: "PUT",
+      headers: { ...headers, "Content-Type": "application/json" },
+      body: JSON.stringify(input),
     });
   }
 

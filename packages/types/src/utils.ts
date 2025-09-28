@@ -1,4 +1,11 @@
 export type WithTimestamps = {
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+export type IResponseShape<T> = {
+  success: boolean;
+  message?: string;
+  data?: T;
+  error?: T;
 };

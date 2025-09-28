@@ -1,11 +1,16 @@
 import { env } from "@/env/client";
+import { auth } from "@clerk/nextjs/server";
 
-export const apiFetchClient = async (
+export const apiFetchServer = async (
   path: string,
   options: RequestInit,
-  token: string,
   data?: object
 ) => {
+  const { getToken } = await auth();
+  const token = await getToken();
+
+  if (!token) throw new Error("No auth token found");
+
   return fetch(`${env.NEXT_PUBLIC_API_URL}/api/v1${path}`, {
     ...options,
     headers: {
