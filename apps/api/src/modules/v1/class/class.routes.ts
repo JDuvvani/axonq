@@ -23,7 +23,7 @@ router.delete("/:id", validate(deleteClassSchema), classController.deleteClass);
 router.get(
   "/:id/students",
   validate(getClassByIdSchema),
-  classController.listStudents
+  classController.listMembers
 );
 
 export const classRoutes = router;

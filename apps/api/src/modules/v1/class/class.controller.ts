@@ -9,7 +9,7 @@ import {
 import { ValidatedRequest } from "@middleware/validate.js";
 import { Fail, Success } from "@axon/utils";
 import { classService } from "./class.service.js";
-import { studentService } from "@v1/student/student.service.js";
+import { classMemberService } from "@v1/class-member/class-member.service.js";
 
 class ClassController {
   createClass = async (
@@ -77,7 +77,7 @@ class ClassController {
     }
   };
 
-  listStudents = async (
+  listMembers = async (
     req: ValidatedRequest<typeof getClassByIdSchema>,
     res: Response
   ) => {
@@ -85,8 +85,8 @@ class ClassController {
       const result = await classService.getClassById(req.params.id);
       if (!result) return res.status(404).json(Fail("Class not found"));
 
-      const list = await studentService.getStudentsByClass(req.params.id);
-      return res.json(Success("Class students list retrieved", list));
+      const list = await classMemberService.getMembersByClass(req.params.id);
+      return res.json(Success("Class-Members list retrieved", list));
     } catch (err: any) {
       return res.status(500).json(Fail(err.message));
     }

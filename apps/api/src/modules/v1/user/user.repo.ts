@@ -1,7 +1,7 @@
 import { CreateUserDTO } from "@axon/types";
 import { IUserDoc, User } from "./user.model.js";
 import { Types } from "mongoose";
-import { ClassSample, CreateUser, StudentSample } from "@types";
+import { ClassSample, CreateUser, ClassMemberSample } from "@types";
 
 class UserRepo {
   create = async (data: CreateUser): Promise<IUserDoc> => {
@@ -9,9 +9,9 @@ class UserRepo {
     return user;
   };
 
-  createParent = async (
+  createConnect = async (
     data: CreateUserDTO,
-    student: StudentSample
+    student: ClassMemberSample
   ): Promise<IUserDoc> => {
     const user = await User.create({ ...data, children: [student] });
     return user;
@@ -65,13 +65,13 @@ class UserRepo {
     }).exec();
   };
 
-  addChild = async (
+  addClassMember = async (
     id: string,
-    sample: StudentSample
+    sample: ClassMemberSample
   ): Promise<IUserDoc | null> => {
     return User.findByIdAndUpdate(
       id,
-      { $addToSet: { children: sample } },
+      { $addToSet: { connections: sample } },
       { new: true }
     ).exec();
   };

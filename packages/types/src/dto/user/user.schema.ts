@@ -16,12 +16,6 @@ export const getUserByIdSchema = object({
   params: idParamsSchema,
 });
 
-export const getUserByClerkIdSchema = object({
-  body: object({
-    clerkId: string(),
-  }),
-});
-
 export const updateUserSchema = object({
   params: idParamsSchema,
   body: object({
@@ -35,7 +29,7 @@ export const updateUserSchema = object({
   path: ["body"],
 });
 
-export const addChildSchema = object({
+export const addClassMemberSchema = object({
   params: idParamsSchema,
   body: object({
     token: uuid(),

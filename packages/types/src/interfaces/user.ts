@@ -14,8 +14,8 @@ export interface IUser extends WithTimestamps {
     name: string;
   }[];
   classCount: number;
-  children: {
-    studentId: string;
+  connections: {
+    classMemberId: string;
     name: string;
   }[];
 }

@@ -12,8 +12,8 @@ class ClassRepo {
     return (await Class.findById(id).exec())?.toJSON() ?? null;
   };
 
-  findByTeacher = async (teacherId: string): Promise<IClassDoc[]> => {
-    return await Class.find({ teacher: teacherId }).select("id");
+  findByOwner = async (ownerId: string): Promise<IClassDoc[]> => {
+    return await Class.find({ teacher: ownerId }).select("id");
   };
 
   update = async (
@@ -31,16 +31,16 @@ class ClassRepo {
     return (await Class.findByIdAndDelete(id).exec())?.toJSON() ?? null;
   };
 
-  deleteByTeacher = async (teacherId: string): Promise<DeleteResult> => {
-    return Class.deleteMany({ teacher: teacherId });
+  deleteByOwner = async (ownerId: string): Promise<DeleteResult> => {
+    return Class.deleteMany({ teacher: ownerId });
   };
 
-  addStudent = async (id: string): Promise<IClassDoc | null> => {
-    return Class.findByIdAndUpdate(id, { $inc: { studentCount: 1 } }).exec();
+  addMember = async (id: string): Promise<IClassDoc | null> => {
+    return Class.findByIdAndUpdate(id, { $inc: { memberCount: 1 } }).exec();
   };
 
-  removeStudent = async (id: string): Promise<IClassDoc | null> => {
-    return Class.findByIdAndUpdate(id, { $inc: { studentCount: -1 } }).exec();
+  removeMember = async (id: string): Promise<IClassDoc | null> => {
+    return Class.findByIdAndUpdate(id, { $inc: { memberCount: -1 } }).exec();
   };
 
   list = async (): Promise<IClassDoc[]> => {

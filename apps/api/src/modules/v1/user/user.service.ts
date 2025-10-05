@@ -1,18 +1,18 @@
-import { AddChildDTO, CreateUserDTO, UpdateUserDTO } from "@axon/types";
+import { AddClassMemberDTO, CreateUserDTO, UpdateUserDTO } from "@axon/types";
 import { userRepo } from "./user.repo.js";
 import { IUserDoc } from "./user.model.js";
-import { studentRepo } from "@v1/student/student.repo.js";
+import { classMemberRepo } from "@v1/class-member/class-member.repo.js";
 import { omit } from "lodash";
 import { classService } from "@v1/class/class.service.js";
-import { studentService } from "@v1/student/student.service.js";
-import { CreateUser, ParentSample } from "@types";
+import { classMemberService } from "@v1/class-member/class-member.service.js";
+import { CreateUser, ConnectSample } from "@types";
 
 class UserService {
   createUser = async (data: CreateUserDTO): Promise<IUserDoc> => {
     let token;
 
     if (data.token) {
-      token = await studentRepo.findParentToken(data.token);
+      token = await classMemberRepo.findConnectToken(data.token);
       if (!token || token.used) throw new Error("Invalid token");
       if (token.expiresAt < new Date()) throw new Error("Token expired");
     }
@@ -20,48 +20,54 @@ class UserService {
     const existing = await userRepo.findByEmail(data.email);
     if (existing) throw new Error("Email already in use");
 
-    const input: CreateUser = { ...omit(data, ["token"]), role: "TEACHER" };
+    const input: CreateUser = { ...omit(data, ["token"]), role: "ADMIN" };
 
     if (token) {
-      const data = { ...input, role: "PARENT" };
-      const parent = await userRepo.createParent(data, token.student);
+      const data = { ...input, role: "CONNECT" };
+      const connect = await userRepo.createConnect(data, token.classMember);
 
-      const sample: ParentSample = {
-        parentId: parent.id,
-        name: parent.name,
-        imageUrl: parent.imageUrl,
+      const sample: ConnectSample = {
+        connectId: connect.id,
+        name: connect.name,
+        imageUrl: connect.imageUrl,
       };
 
-      studentService.addParent(token.student.studentId.toString(), sample);
-      studentRepo.useToken(token.id);
+      classMemberService.addConnect(
+        token.classMember.classMemberId.toString(),
+        sample
+      );
+      classMemberRepo.useToken(token.id);
 
-      return parent;
+      return connect;
     }
 
     return userRepo.create(input);
   };
 
-  addChild = async (
+  addConnection = async (
     id: string,
-    input: AddChildDTO
+    input: AddClassMemberDTO
   ): Promise<IUserDoc | null> => {
     const [token, user] = await Promise.all([
-      studentRepo.findParentToken(input.token),
+      classMemberRepo.findConnectToken(input.token),
       userRepo.findById(id),
     ]);
     if (!token || token.used) throw new Error("Invalid token");
     if (token.expiresAt < new Date()) throw new Error("Token expired");
-    if (!user) throw new Error("Parent not found");
+    if (!user) throw new Error("Connect not found");
 
-    const sample: ParentSample = {
-      parentId: user.id,
+    const sample: ConnectSample = {
+      connectId: user.id,
       name: user.name,
       imageUrl: user.imageUrl,
     };
-    studentService.addParent(token.student.studentId.toString(), sample);
-    studentRepo.useToken(token.id);
+    classMemberService.addConnect(
+      token.classMember.classMemberId.toString(),
+      sample
+    );
+    classMemberRepo.useToken(token.id);
 
-    const parent = await userRepo.addChild(id, token.student);
+    const parent = await userRepo.addClassMember(id, token.classMember);
 
     return parent;
   };
@@ -88,9 +94,10 @@ class UserService {
   deleteUser = async (id: string): Promise<IUserDoc | null> => {
     const user = await userRepo.findById(id);
     if (!user) throw new Error("User not found");
-    if (user.role === "PARENT") await studentService.removeParentFromAll(id);
+    if (user.role === "CONNECT")
+      await classMemberService.removeConnectFromAll(id);
 
-    await classService.deleteByTeacher(id);
+    await classService.deleteByOwner(id);
 
     return userRepo.delete(id);
   };

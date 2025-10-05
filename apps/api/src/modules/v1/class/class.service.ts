@@ -5,21 +5,21 @@ import { classRepo } from "./class.repo.js";
 import { userRepo } from "../user/user.repo.js";
 import { ClassSample } from "@types";
 import { DeleteResult } from "mongoose";
-import { studentService } from "@v1/student/student.service.js";
+import { classMemberService } from "@v1/class-member/class-member.service.js";
 
 class ClassService {
   createClass = async (data: CreateClassDTO): Promise<IClassDoc> => {
-    const teacher = await userService.getUserById(data.teacher);
-    if (!teacher) throw new Error("Teacher not found");
-    if (teacher.role !== "TEACHER")
-      throw new Error("Provided teacherId is not a TEACHER");
+    const owner = await userService.getUserById(data.ownerId);
+    if (!owner) throw new Error("User not found");
+    if (owner.role !== "ADMIN")
+      throw new Error("Provided ownerId is not Admin");
 
     const newClass = await classRepo.create(data);
     const classSample: ClassSample = {
       classId: newClass.id,
       name: newClass.name,
     };
-    await userRepo.addClass(newClass.teacher, classSample);
+    await userRepo.addClass(newClass.ownerId, classSample);
 
     return newClass;
   };
@@ -33,11 +33,10 @@ class ClassService {
     data: UpdateClassDTO
   ): Promise<IClassDoc | null> => {
     let updated;
-    if (data.teacher) {
-      const teacher = await userService.getUserById(data.teacher);
-      if (!teacher) throw new Error("New teacher not found");
-      if (teacher.role !== "TEACHER")
-        throw new Error("New teacher is not a TEACHER");
+    if (data.ownerId) {
+      const owner = await userService.getUserById(data.ownerId);
+      if (!owner) throw new Error("New owner not found");
+      if (owner.role !== "ADMIN") throw new Error("New owner is not Admin");
 
       const [old, result] = await Promise.all([
         classRepo.findById(id),
@@ -52,8 +51,8 @@ class ClassService {
       };
 
       Promise.all([
-        userRepo.addClass(updated.teacher, classSample),
-        userRepo.removeClass(old.teacher, updated.id),
+        userRepo.addClass(updated.ownerId, classSample),
+        userRepo.removeClass(old.ownerId, updated.id),
       ]);
     } else {
       updated = await classRepo.update(id, data);
@@ -66,21 +65,21 @@ class ClassService {
     const deleted = await classRepo.delete(id);
     if (deleted) {
       Promise.all([
-        userRepo.removeClass(deleted.teacher, deleted.id),
-        studentService.deleteByClass(id),
+        userRepo.removeClass(deleted.ownerId, deleted.id),
+        classMemberService.deleteByClass(id),
       ]);
     }
 
     return deleted;
   };
 
-  deleteByTeacher = async (teacherId: string): Promise<DeleteResult> => {
-    const classes = await classRepo.findByTeacher(teacherId);
+  deleteByOwner = async (ownerId: string): Promise<DeleteResult> => {
+    const classes = await classRepo.findByOwner(ownerId);
     const classIds = classes.map((c) => c.id);
 
-    await studentService.deleteByClasses(classIds);
+    await classMemberService.deleteByClasses(classIds);
 
-    return classRepo.deleteByTeacher(teacherId);
+    return classRepo.deleteByOwner(ownerId);
   };
 
   listClasses = async (): Promise<IClassDoc[]> => {

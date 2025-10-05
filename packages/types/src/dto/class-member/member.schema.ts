@@ -1,19 +1,19 @@
 import { int, object, string, url } from "zod";
 import { idParamsSchema, objectIdString } from "../common.js";
 
-export const createStudentSchema = object({
+export const createClassMemberSchema = object({
   body: object({
     firstName: string().min(2),
     lastName: string().min(2),
-    class: objectIdString,
+    classId: objectIdString,
   }),
 });
 
-export const getStudentByIdSchema = object({
+export const getClassMemberByIdSchema = object({
   params: idParamsSchema,
 });
 
-export const updateStudentSchema = object({
+export const updateClassMemberSchema = object({
   params: idParamsSchema,
   body: object({
     firstName: string().min(2).optional(),
@@ -22,9 +22,9 @@ export const updateStudentSchema = object({
   }),
 });
 
-export const deleteStudentSchema = getStudentByIdSchema;
+export const deleteStudentSchema = getClassMemberByIdSchema;
 
-export const generateParentTokenSchema = object({
+export const generateConnectTokenSchema = object({
   params: idParamsSchema,
   body: object({
     ttlHours: int()
@@ -33,11 +33,11 @@ export const generateParentTokenSchema = object({
   }).optional(),
 });
 
-export const getParentTokensSchema = object({
+export const getConnectTokensSchema = object({
   params: idParamsSchema,
 });
 
-export const deleteParentTokenSchema = object({
+export const deleteConnectTokenSchema = object({
   params: object({
     id: objectIdString,
     tokenId: objectIdString,

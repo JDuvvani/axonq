@@ -5,13 +5,13 @@ export type ClassSample = {
   name: string;
 };
 
-export type StudentSample = {
-  studentId: Types.ObjectId;
+export type ClassMemberSample = {
+  classMemberId: Types.ObjectId;
   name: string;
 };
 
-export type ParentSample = {
-  parentId: Types.ObjectId;
+export type ConnectSample = {
+  connectId: Types.ObjectId;
   name: string;
   imageUrl: string;
 };
