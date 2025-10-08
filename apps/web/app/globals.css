@@ -55,6 +55,9 @@
   --shadow-2xl: 0px 4px 8px -2px hsl(0 0% 0% / 0.25);
   --tracking-normal: 0em;
   --spacing: 0.25rem;
+
+  --sidebar-width: 18rem;
+  --sidebar-collapsed-width: 4rem;
 }
 
 .dark {
@@ -160,6 +163,10 @@
   --shadow-lg: var(--shadow-lg);
   --shadow-xl: var(--shadow-xl);
   --shadow-2xl: var(--shadow-2xl);
+
+  --width-sidebar: var(--sidebar-width);
+  --width-sidebar-collapsed: var(--sidebar-collapsed-width);
+  --transition-duration-sidebar: 300ms;
 }
 
 @layer base {
@@ -182,6 +189,14 @@
     @apply hover:cursor-pointer;
   }
 
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible,
+  a:focus-visible {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-current/60;
+  }
+
   body {
     @apply bg-background text-foreground;
   }
@@ -194,6 +209,6 @@
     max-width: none;
   }
   @media (width >= 1400px) {
-    max-width: 1400px;
+    max-width: none;
   }
 }

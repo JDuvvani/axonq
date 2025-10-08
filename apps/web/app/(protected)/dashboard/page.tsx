@@ -7,8 +7,10 @@ export default function Page() {
 
   return (
     <div>
-      <h1 className="text-4xl font-bold text-center">Dashboard</h1>
-      <h2 className="text-center">{user && user.name}</h2>
+      <div>
+        <h1 className="text-4xl font-bold">Dashboard</h1>
+      </div>
+      <h2 className="">{user && user.name}</h2>
     </div>
   );
 }
